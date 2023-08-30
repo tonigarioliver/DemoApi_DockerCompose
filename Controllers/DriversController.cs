@@ -22,6 +22,7 @@ public class DriversController : ControllerBase
     }
 
     [HttpGet(Name = "GetAllDriver")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get()
     {
         var driver = new Driver()
@@ -32,8 +33,7 @@ public class DriversController : ControllerBase
 
         await _UnitOfWork.Drivers.CreateAsync(driver);
         await _UnitOfWork.CompleteAsyn();
-
-        var allDrivers =  await _UnitOfWork.Drivers.GetAllAsync();
+        var allDrivers=  await _UnitOfWork.Drivers.GetAllAsync();
         return Ok(allDrivers);
     }
 
