@@ -1,3 +1,4 @@
+using DemoApp.Core.IConfiguration;
 using DemoApp.Data;
 using DemoApp.Models;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -11,13 +12,13 @@ namespace DemoApp.Controllers;
 public class DriversController : ControllerBase
 {
     private readonly ILogger<DriversController> _logger;
-    private readonly ApiDbContext _context;
+    private readonly IUnitOfWork _UnitOfWork;
     public DriversController(
         ILogger<DriversController> logger,
-        ApiDbContext context)
+        IUnitOfWork UnitOfWork)
     {
         _logger = logger;
-        _context = context;
+        _UnitOfWork = UnitOfWork;
     }
 
     [HttpGet(Name = "GetAllDriver")]
@@ -29,10 +30,10 @@ public class DriversController : ControllerBase
             Name = "Sir Lewis Hamilton"
         };
 
-        _context.Add(driver);
-        await _context.SaveChangesAsync();
+        await _UnitOfWork.Drivers.CreateAsync(driver);
+        await _UnitOfWork.CompleteAsyn();
 
-        var allDrivers =  await _context.Drivers.ToListAsync();
+        var allDrivers =  await _UnitOfWork.Drivers.GetAllAsync();
         return Ok(allDrivers);
     }
 
